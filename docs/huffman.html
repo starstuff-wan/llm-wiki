@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Huffman 编码 · LLM Wiki</title>
+<meta name="description" content="图像压缩程序 · 代码讲解知识库">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='white'%3E%23%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('llmwiki-theme');if(t)document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.dataset.theme='dark';}catch(e){}</script>
+</head>
+<body>
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <button class="icon-btn only-mobile" id="menuBtn" aria-label="打开菜单">☰</button>
+  <a class="brand" href="index.html"><span class="logo">◈</span><span>LLM Wiki</span></a>
+  <button class="search-trigger" id="searchTrigger"><span>🔍 搜索全部页面</span><kbd>Ctrl</kbd><kbd>K</kbd></button>
+  <button class="icon-btn" id="themeBtn" aria-label="切换主题">🌙</button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="nav"><a class="navlink " href="index.html"><span class="ni">◈</span>首页总览</a><div class="navgroup"><h5>起步</h5><a class="navlink" href="global.html"><span class="ni">🗺</span>全局：三个文件各管什么</a></div><div class="navgroup"><h5>核心原理</h5><a class="navlink active" href="huffman.html"><span class="ni">🌲</span>Huffman 编码</a><a class="navlink" href="format.html"><span class="ni">📦</span>压缩文件格式 ICP1</a></div><div class="navgroup"><h5>三种算法</h5><a class="navlink" href="rle.html"><span class="ni">➡</span>RLE 行程编码</a><a class="navlink" href="lzw.html"><span class="ni">📖</span>LZW 字典编码</a><a class="navlink" href="bmp.html"><span class="ni">🖼</span>图像读写：手撕 BMP</a></div><div class="navgroup"><h5>质量评估</h5><a class="navlink" href="metrics.html"><span class="ni">📐</span>性能指标 PSNR / SSIM / 熵</a></div><div class="navgroup"><h5>工程实践</h5><a class="navlink" href="build.html"><span class="ni">⚙</span>编译与运行</a><a class="navlink" href="evidence.html"><span class="ni">✅</span>验证到什么程度</a></div><div class="navgroup"><h5>答辩准备</h5><a class="navlink" href="rewrite.html"><span class="ni">✍</span>建议你自己重写的 5 处</a><a class="navlink" href="faq.html"><span class="ni">💬</span>常见追问速查</a></div><div class="navgroup"><h5>互动</h5><a class="navlink " href="graph.html"><span class="ni">🕸</span>知识图谱</a><a class="navlink " href="quiz.html"><span class="ni">🎯</span>自测卡片</a></div></nav></aside>
+  <main class="content"><article><div class="pagehead"><div class="kicker">核心原理</div><h1>Huffman 编码</h1></div><h3 id="h1">1.1 原理一句话</h3><p><strong>出现次数多的像素给短码，出现次数少的给长码</strong>，并且任何码字都不能是另一个码字的前缀（前缀码），这样解码时不用分隔符也不会歧义。</p><h3 id="h2">1.2 建树（<code>HuffTable::build</code>，<code>huffman.cpp:54</code>）</h3><ol><li>每个出现过的像素值做一个叶子结点，权重 = 出现次数；</li><li>反复取出<strong>权重最小的两个</strong>结点，合并成一个新父结点（权重相加），塞回队列；</li><li>最后剩下一个结点就是根；</li><li>从根往下走，<strong>左边记 0、右边记 1</strong>，走到叶子时经过的 0/1 序列就是该像素的码字。</li></ol><p>代码里用的是 <strong>小根堆</strong>（<code>std::priority_queue</code> + 自定义比较器 <code>HNodeGreater</code>），每次取最小是 O(log n)，总共 O(n log n)。</p><div class="callout"><span class="ci">💡</span><p><strong>答辩点</strong>：为什么用堆而不是每次扫一遍数组找最小？——256 个符号时差别不大，但堆是标准做法，且符号数增大时优势明显。</p></div><h3 id="h3">1.3 为什么用“规范 Huffman”（<code>HuffTable::buildCanonical</code>，<code>huffman.cpp:29</code>）</h3><p>普通 Huffman 每个结点都存码字，压缩文件里就得写 256 个码字（每个 4 字节）＝ 1024 字节开销。</p><p><strong>规范 Huffman 只存码长</strong>（256 个字节），码字按固定规则现算：</p><div class="codeblock"><div class="codebar"><span>text</span><button class="copy" type="button">复制</button></div><pre><code class="lang-text">按码长从小到大、同长度按符号从小到大排序
+code = 0
+for 每个长度 L:
+    code = (code + 长度小于 L 的码字个数) &lt;&lt; 1
+    该长度的码字从这里依次 +1 分配</code></pre></div><p>解码端用<strong>同样的规则</strong>重建，所以两边码字必然一致。文件头因此只有 256 字节。</p><div class="callout"><span class="ci">💡</span><p><strong>答辩点</strong>：这是本题最容易被追问的地方——“你怎么保证解码端码字和编码端一致？”答：不传码字，只传码长，码字由确定性算法推导。</p></div><h3 id="h4">1.4 比特流（<code>BitWriter::put</code>，<code>huffman.cpp:159</code>）</h3><p>Huffman 输出的是<strong>不等长比特</strong>，但文件是按字节写的，所以要自己攒位：</p><div class="codeblock"><div class="codebar"><span>cpp</span><button class="copy" type="button">复制</button></div><pre><code class="lang-cpp">void BitWriter::put(uint32_t value, int nbits) {
+    for (int i = nbits - 1; i &gt;= 0; --i) {     // 高位先写（MSB first）
+        uint32_t bit = (value &gt;&gt; i) &amp; 1u;
+        if ((bitCount &amp; 7u) == 0) buf.push_back(0);   // 满 8 位换新字节
+        if (bit) buf.back() |= (0x80u &gt;&gt; (bitCount &amp; 7u));
+        ++bitCount;
+    }
+}</code></pre></div><p>最后一次写入不满 8 位时，低位补 0。因此<strong>必须记录有效比特数</strong>，否则解码会把补的 0 当成数据——这就是文件头第 24 字节那 8 个字节 <code>payloadBits</code> 的用途。</p><h3 id="h5">1.5 解码（<code>huffmanDecode</code>，<code>huffman.cpp:211</code>）</h3><p>没有分隔符，怎么知道码字在哪结束？<strong>逐位读，每读一位就查一次表</strong>：</p><div class="codeblock"><div class="codebar"><span>cpp</span><button class="copy" type="button">复制</button></div><pre><code class="lang-cpp">code = (code &lt;&lt; 1) | nextBit;
+if (表里有 (当前长度, code)) { 输出该符号; break; }</code></pre></div><p>因为前缀码保证“短码不会是长码的前缀”，一旦命中就不可能再是别的符号。</p><p>代码里用 <code>unordered_map&lt;uint64_t,int&gt;</code>，键是 <code>(长度 &lt;&lt; 32) | 码字</code>，避免长短码混淆。</p></article><section class="related"><h4>相关页面</h4><div class="chips"><a class="chip" href="global.html">全局：三个文件各管什么<em>主算法</em></a><a class="chip" href="format.html">压缩文件格式 ICP1<em>码长表写进文件头</em></a><a class="chip" href="metrics.html">性能指标 PSNR / SSIM / 熵<em>平均码长 vs 熵</em></a><a class="chip" href="faq.html">常见追问速查<em>高频追问</em></a></div></section><nav class="pager"><a class="pg prev" href="global.html"><small>← 上一篇</small>全局：三个文件各管什么</a><a class="pg next" href="format.html"><small>下一篇 →</small>压缩文件格式 ICP1</a></nav></main>
+  <aside class="toc"><h4>本页目录</h4><ul><li><a href="#h1">1.1 原理一句话</a></li><li><a href="#h2">1.2 建树（HuffTable::build，huffman.cpp:54）</a></li><li><a href="#h3">1.3 为什么用“规范 Huffman”（HuffTable::buildCanonical，huffman.cpp:29）</a></li><li><a href="#h4">1.4 比特流（BitWriter::put，huffman.cpp:159）</a></li><li><a href="#h5">1.5 解码（huffmanDecode，huffman.cpp:211）</a></li></ul></aside>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="palette" id="palette" hidden>
+  <div class="pbox">
+    <input id="searchInput" type="text" placeholder="输入关键词，↑↓ 选择，Enter 打开…" autocomplete="off">
+    <div class="presults" id="searchResults"></div>
+    <div class="pfoot"><span><kbd>Esc</kbd> 关闭</span><span><kbd>↑</kbd><kbd>↓</kbd> 移动</span><span><kbd>Enter</kbd> 打开</span></div>
+  </div>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>

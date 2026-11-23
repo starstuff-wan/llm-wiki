@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LZW 字典编码 · LLM Wiki</title>
+<meta name="description" content="图像压缩程序 · 代码讲解知识库">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='white'%3E%23%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('llmwiki-theme');if(t)document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.dataset.theme='dark';}catch(e){}</script>
+</head>
+<body>
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <button class="icon-btn only-mobile" id="menuBtn" aria-label="打开菜单">☰</button>
+  <a class="brand" href="index.html"><span class="logo">◈</span><span>LLM Wiki</span></a>
+  <button class="search-trigger" id="searchTrigger"><span>🔍 搜索全部页面</span><kbd>Ctrl</kbd><kbd>K</kbd></button>
+  <button class="icon-btn" id="themeBtn" aria-label="切换主题">🌙</button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="nav"><a class="navlink " href="index.html"><span class="ni">◈</span>首页总览</a><div class="navgroup"><h5>起步</h5><a class="navlink" href="global.html"><span class="ni">🗺</span>全局：三个文件各管什么</a></div><div class="navgroup"><h5>核心原理</h5><a class="navlink" href="huffman.html"><span class="ni">🌲</span>Huffman 编码</a><a class="navlink" href="format.html"><span class="ni">📦</span>压缩文件格式 ICP1</a></div><div class="navgroup"><h5>三种算法</h5><a class="navlink" href="rle.html"><span class="ni">➡</span>RLE 行程编码</a><a class="navlink active" href="lzw.html"><span class="ni">📖</span>LZW 字典编码</a><a class="navlink" href="bmp.html"><span class="ni">🖼</span>图像读写：手撕 BMP</a></div><div class="navgroup"><h5>质量评估</h5><a class="navlink" href="metrics.html"><span class="ni">📐</span>性能指标 PSNR / SSIM / 熵</a></div><div class="navgroup"><h5>工程实践</h5><a class="navlink" href="build.html"><span class="ni">⚙</span>编译与运行</a><a class="navlink" href="evidence.html"><span class="ni">✅</span>验证到什么程度</a></div><div class="navgroup"><h5>答辩准备</h5><a class="navlink" href="rewrite.html"><span class="ni">✍</span>建议你自己重写的 5 处</a><a class="navlink" href="faq.html"><span class="ni">💬</span>常见追问速查</a></div><div class="navgroup"><h5>互动</h5><a class="navlink " href="graph.html"><span class="ni">🕸</span>知识图谱</a><a class="navlink " href="quiz.html"><span class="ni">🎯</span>自测卡片</a></div></nav></aside>
+  <main class="content"><article><div class="pagehead"><div class="kicker">三种算法</div><h1>LZW 字典编码</h1></div><p><strong>原理</strong>：边压缩边建字典，把“出现过的长串”映射成一个编号。</p><div class="codeblock"><div class="codebar"><span>text</span><button class="copy" type="button">复制</button></div><pre><code class="lang-text">字典初始 = 256 个单字节
+读入字符，若 前缀+当前字符 在字典里 → 前缀变长，继续
+否则 → 输出前缀的编号，把 前缀+当前字符 登记为新编号</code></pre></div><p>关键细节，也是本题最容易写错的地方：</p><ol><li><strong>字典里只放两字节及以上的串</strong>。若把单字节也放进去，键 <code>(前缀&lt;&lt;8)|字节</code> 会和单字节的键撞车（我第一版就踩了这个坑）。</li><li><strong>编解码两端的词条登记时机必须一致</strong>：编码器每输出一个码字就登记一个新词条；解码器每读一个码字，用“上一个串 + 当前串首字节”补登一个。差一步就全乱。</li><li>本实现<strong>固定 12 位码</strong>，不去维护“字典满了位宽何时从 9 涨到 10”。代价是压缩比略差（约 5%~10%），好处是不会有位宽不同步的 bug。</li></ol><div class="callout"><span class="ci">💡</span><p><strong>答辩点</strong>：老师很可能问“LZW 为什么能压缩？”——因为它把重复出现的<strong>串</strong>换成了短编号，而编号的比特数（12 位）远小于串的长度。</p></div></article><section class="related"><h4>相关页面</h4><div class="chips"><a class="chip" href="format.html">压缩文件格式 ICP1<em>同一容器</em></a><a class="chip" href="rle.html">RLE 行程编码<em>算法对比</em></a><a class="chip" href="rewrite.html">建议你自己重写的 5 处<em>最易写错</em></a></div></section><nav class="pager"><a class="pg prev" href="rle.html"><small>← 上一篇</small>RLE 行程编码</a><a class="pg next" href="bmp.html"><small>下一篇 →</small>图像读写：手撕 BMP</a></nav></main>
+  <aside class="toc"></aside>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="palette" id="palette" hidden>
+  <div class="pbox">
+    <input id="searchInput" type="text" placeholder="输入关键词，↑↓ 选择，Enter 打开…" autocomplete="off">
+    <div class="presults" id="searchResults"></div>
+    <div class="pfoot"><span><kbd>Esc</kbd> 关闭</span><span><kbd>↑</kbd><kbd>↓</kbd> 移动</span><span><kbd>Enter</kbd> 打开</span></div>
+  </div>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>首页总览 · LLM Wiki</title>
+<meta name="description" content="图像压缩程序 · 代码讲解知识库">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='white'%3E%23%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('llmwiki-theme');if(t)document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.dataset.theme='dark';}catch(e){}</script>
+</head>
+<body>
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <button class="icon-btn only-mobile" id="menuBtn" aria-label="打开菜单">☰</button>
+  <a class="brand" href="index.html"><span class="logo">◈</span><span>LLM Wiki</span></a>
+  <button class="search-trigger" id="searchTrigger"><span>🔍 搜索全部页面</span><kbd>Ctrl</kbd><kbd>K</kbd></button>
+  <button class="icon-btn" id="themeBtn" aria-label="切换主题">🌙</button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="nav"><a class="navlink active" href="index.html"><span class="ni">◈</span>首页总览</a><div class="navgroup"><h5>起步</h5><a class="navlink" href="global.html"><span class="ni">🗺</span>全局：三个文件各管什么</a></div><div class="navgroup"><h5>核心原理</h5><a class="navlink" href="huffman.html"><span class="ni">🌲</span>Huffman 编码</a><a class="navlink" href="format.html"><span class="ni">📦</span>压缩文件格式 ICP1</a></div><div class="navgroup"><h5>三种算法</h5><a class="navlink" href="rle.html"><span class="ni">➡</span>RLE 行程编码</a><a class="navlink" href="lzw.html"><span class="ni">📖</span>LZW 字典编码</a><a class="navlink" href="bmp.html"><span class="ni">🖼</span>图像读写：手撕 BMP</a></div><div class="navgroup"><h5>质量评估</h5><a class="navlink" href="metrics.html"><span class="ni">📐</span>性能指标 PSNR / SSIM / 熵</a></div><div class="navgroup"><h5>工程实践</h5><a class="navlink" href="build.html"><span class="ni">⚙</span>编译与运行</a><a class="navlink" href="evidence.html"><span class="ni">✅</span>验证到什么程度</a></div><div class="navgroup"><h5>答辩准备</h5><a class="navlink" href="rewrite.html"><span class="ni">✍</span>建议你自己重写的 5 处</a><a class="navlink" href="faq.html"><span class="ni">💬</span>常见追问速查</a></div><div class="navgroup"><h5>互动</h5><a class="navlink " href="graph.html"><span class="ni">🕸</span>知识图谱</a><a class="navlink " href="quiz.html"><span class="ni">🎯</span>自测卡片</a></div></nav></aside>
+  <main class="content"><article><div class="hero">
+  <div class="kicker">图像压缩程序 · 代码讲解知识库</div>
+  <h1>从一份 Markdown 长文，到一个能点、能搜、能联想的 wiki</h1>
+  <p class="lede">共 11 个词条 · 4,962 字 · 由 build.py 自动编译。左侧是目录，右上角可全局搜索（Ctrl K），
+  🕸 知识图谱可以拖动节点，🎯 自测卡片可以边翻边背。</p>
+  <div class="herobtns"><a class="btn primary" href="global.html">从「全局」开始读 →</a><a class="btn" href="graph.html">打开知识图谱</a></div>
+</div>
+<div class="quote"><div class="callout"><span class="ci">💡</span><p>面向 C++17，零第三方依赖。全文按“先讲原理、再指到代码、最后讲怎么答辩”的顺序组织。</p></div></div>
+<h2 class="sec">全部词条</h2>
+<div class="cards"><a class="card" href="global.html"><span class="ci">🗺</span><b>全局：三个文件各管什么</b><small>起步</small></a><a class="card" href="huffman.html"><span class="ci">🌲</span><b>Huffman 编码</b><small>核心原理</small></a><a class="card" href="format.html"><span class="ci">📦</span><b>压缩文件格式 ICP1</b><small>核心原理</small></a><a class="card" href="rle.html"><span class="ci">➡</span><b>RLE 行程编码</b><small>三种算法</small></a><a class="card" href="lzw.html"><span class="ci">📖</span><b>LZW 字典编码</b><small>三种算法</small></a><a class="card" href="bmp.html"><span class="ci">🖼</span><b>图像读写：手撕 BMP</b><small>三种算法</small></a><a class="card" href="metrics.html"><span class="ci">📐</span><b>性能指标 PSNR / SSIM / 熵</b><small>质量评估</small></a><a class="card" href="build.html"><span class="ci">⚙</span><b>编译与运行</b><small>工程实践</small></a><a class="card" href="evidence.html"><span class="ci">✅</span><b>验证到什么程度</b><small>工程实践</small></a><a class="card" href="rewrite.html"><span class="ci">✍</span><b>建议你自己重写的 5 处</b><small>答辩准备</small></a><a class="card" href="faq.html"><span class="ci">💬</span><b>常见追问速查</b><small>答辩准备</small></a></div></article></main>
+  <aside class="toc"></aside>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="palette" id="palette" hidden>
+  <div class="pbox">
+    <input id="searchInput" type="text" placeholder="输入关键词，↑↓ 选择，Enter 打开…" autocomplete="off">
+    <div class="presults" id="searchResults"></div>
+    <div class="pfoot"><span><kbd>Esc</kbd> 关闭</span><span><kbd>↑</kbd><kbd>↓</kbd> 移动</span><span><kbd>Enter</kbd> 打开</span></div>
+  </div>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>

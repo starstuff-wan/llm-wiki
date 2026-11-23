@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>图像读写：手撕 BMP · LLM Wiki</title>
+<meta name="description" content="图像压缩程序 · 代码讲解知识库">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='white'%3E%23%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('llmwiki-theme');if(t)document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.dataset.theme='dark';}catch(e){}</script>
+</head>
+<body>
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <button class="icon-btn only-mobile" id="menuBtn" aria-label="打开菜单">☰</button>
+  <a class="brand" href="index.html"><span class="logo">◈</span><span>LLM Wiki</span></a>
+  <button class="search-trigger" id="searchTrigger"><span>🔍 搜索全部页面</span><kbd>Ctrl</kbd><kbd>K</kbd></button>
+  <button class="icon-btn" id="themeBtn" aria-label="切换主题">🌙</button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="nav"><a class="navlink " href="index.html"><span class="ni">◈</span>首页总览</a><div class="navgroup"><h5>起步</h5><a class="navlink" href="global.html"><span class="ni">🗺</span>全局：三个文件各管什么</a></div><div class="navgroup"><h5>核心原理</h5><a class="navlink" href="huffman.html"><span class="ni">🌲</span>Huffman 编码</a><a class="navlink" href="format.html"><span class="ni">📦</span>压缩文件格式 ICP1</a></div><div class="navgroup"><h5>三种算法</h5><a class="navlink" href="rle.html"><span class="ni">➡</span>RLE 行程编码</a><a class="navlink" href="lzw.html"><span class="ni">📖</span>LZW 字典编码</a><a class="navlink active" href="bmp.html"><span class="ni">🖼</span>图像读写：手撕 BMP</a></div><div class="navgroup"><h5>质量评估</h5><a class="navlink" href="metrics.html"><span class="ni">📐</span>性能指标 PSNR / SSIM / 熵</a></div><div class="navgroup"><h5>工程实践</h5><a class="navlink" href="build.html"><span class="ni">⚙</span>编译与运行</a><a class="navlink" href="evidence.html"><span class="ni">✅</span>验证到什么程度</a></div><div class="navgroup"><h5>答辩准备</h5><a class="navlink" href="rewrite.html"><span class="ni">✍</span>建议你自己重写的 5 处</a><a class="navlink" href="faq.html"><span class="ni">💬</span>常见追问速查</a></div><div class="navgroup"><h5>互动</h5><a class="navlink " href="graph.html"><span class="ni">🕸</span>知识图谱</a><a class="navlink " href="quiz.html"><span class="ni">🎯</span>自测卡片</a></div></nav></aside>
+  <main class="content"><article><div class="pagehead"><div class="kicker">三种算法</div><h1>图像读写：手撕 BMP</h1></div><p>不调用任何图像库，自己按 BMP 规范解析：</p><ul><li><strong>BITMAPFILEHEADER 14 字节</strong>：<code>'B''M'</code> + 文件大小 + 像素数据偏移</li><li><strong>BITMAPINFOHEADER 40 字节</strong>：宽、高、位深、压缩方式</li><li><strong>像素数据</strong>：<strong>自下而上</strong>存放，每行按 4 字节对齐，24 位时是 <code>B,G,R</code> 顺序</li></ul><p>三个容易错的地方，代码里都处理了：</p><ol><li><strong>行对齐</strong>：每行字节数要补到 4 的倍数，<code>stride = (width*3 + 3) &amp; ~3</code>；</li><li><strong>自下而上</strong>：BMP 默认最后一行在最前面，读的时候要倒过来；<code>height</code> 为负表示自上而下；</li><li><strong>BGR 顺序</strong>：BMP 存的是 B,G,R，程序内部统一用 R,G,B。</li></ol></article><section class="related"><h4>相关页面</h4><div class="chips"><a class="chip" href="global.html">全局：三个文件各管什么<em>输入输出</em></a><a class="chip" href="format.html">压缩文件格式 ICP1<em>原始字节数</em></a></div></section><nav class="pager"><a class="pg prev" href="lzw.html"><small>← 上一篇</small>LZW 字典编码</a><a class="pg next" href="metrics.html"><small>下一篇 →</small>性能指标 PSNR / SSIM / 熵</a></nav></main>
+  <aside class="toc"></aside>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="palette" id="palette" hidden>
+  <div class="pbox">
+    <input id="searchInput" type="text" placeholder="输入关键词，↑↓ 选择，Enter 打开…" autocomplete="off">
+    <div class="presults" id="searchResults"></div>
+    <div class="pfoot"><span><kbd>Esc</kbd> 关闭</span><span><kbd>↑</kbd><kbd>↓</kbd> 移动</span><span><kbd>Enter</kbd> 打开</span></div>
+  </div>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>

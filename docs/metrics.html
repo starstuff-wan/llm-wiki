@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>性能指标 PSNR / SSIM / 熵 · LLM Wiki</title>
+<meta name="description" content="图像压缩程序 · 代码讲解知识库">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='white'%3E%23%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('llmwiki-theme');if(t)document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.dataset.theme='dark';}catch(e){}</script>
+</head>
+<body>
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <button class="icon-btn only-mobile" id="menuBtn" aria-label="打开菜单">☰</button>
+  <a class="brand" href="index.html"><span class="logo">◈</span><span>LLM Wiki</span></a>
+  <button class="search-trigger" id="searchTrigger"><span>🔍 搜索全部页面</span><kbd>Ctrl</kbd><kbd>K</kbd></button>
+  <button class="icon-btn" id="themeBtn" aria-label="切换主题">🌙</button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="nav"><a class="navlink " href="index.html"><span class="ni">◈</span>首页总览</a><div class="navgroup"><h5>起步</h5><a class="navlink" href="global.html"><span class="ni">🗺</span>全局：三个文件各管什么</a></div><div class="navgroup"><h5>核心原理</h5><a class="navlink" href="huffman.html"><span class="ni">🌲</span>Huffman 编码</a><a class="navlink" href="format.html"><span class="ni">📦</span>压缩文件格式 ICP1</a></div><div class="navgroup"><h5>三种算法</h5><a class="navlink" href="rle.html"><span class="ni">➡</span>RLE 行程编码</a><a class="navlink" href="lzw.html"><span class="ni">📖</span>LZW 字典编码</a><a class="navlink" href="bmp.html"><span class="ni">🖼</span>图像读写：手撕 BMP</a></div><div class="navgroup"><h5>质量评估</h5><a class="navlink active" href="metrics.html"><span class="ni">📐</span>性能指标 PSNR / SSIM / 熵</a></div><div class="navgroup"><h5>工程实践</h5><a class="navlink" href="build.html"><span class="ni">⚙</span>编译与运行</a><a class="navlink" href="evidence.html"><span class="ni">✅</span>验证到什么程度</a></div><div class="navgroup"><h5>答辩准备</h5><a class="navlink" href="rewrite.html"><span class="ni">✍</span>建议你自己重写的 5 处</a><a class="navlink" href="faq.html"><span class="ni">💬</span>常见追问速查</a></div><div class="navgroup"><h5>互动</h5><a class="navlink " href="graph.html"><span class="ni">🕸</span>知识图谱</a><a class="navlink " href="quiz.html"><span class="ni">🎯</span>自测卡片</a></div></nav></aside>
+  <main class="content"><article><div class="pagehead"><div class="kicker">质量评估</div><h1>性能指标 PSNR / SSIM / 熵</h1></div><ul><li><strong>压缩比</strong> = 原始字节数 / 压缩后字节数（含 32 字节文件头）</li><li><strong>PSNR</strong> = <code>10·log10(255² / MSE)</code>，无损压缩时 MSE=0，程序里约定输出 99 表示无穷</li><li><strong>SSIM</strong>：8×8 窗口上算均值、方差、协方差，用 <code>C1=(0.01·255)²</code>、<code>C2=(0.03·255)²</code> 稳定分母</li><li><strong>一阶熵</strong>：<code>-Σ p·log2(p)</code>，是 Huffman 的<strong>理论下限</strong>。报告里把“平均码长”和“熵”并列，能说明 Huffman 的效率（一般差距 &lt; 0.1 bit）</li></ul></article><section class="related"><h4>相关页面</h4><div class="chips"><a class="chip" href="huffman.html">Huffman 编码<em>平均码长 vs 熵</em></a><a class="chip" href="evidence.html">验证到什么程度<em>实测数据</em></a></div></section><nav class="pager"><a class="pg prev" href="bmp.html"><small>← 上一篇</small>图像读写：手撕 BMP</a><a class="pg next" href="build.html"><small>下一篇 →</small>编译与运行</a></nav></main>
+  <aside class="toc"></aside>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="palette" id="palette" hidden>
+  <div class="pbox">
+    <input id="searchInput" type="text" placeholder="输入关键词，↑↓ 选择，Enter 打开…" autocomplete="off">
+    <div class="presults" id="searchResults"></div>
+    <div class="pfoot"><span><kbd>Esc</kbd> 关闭</span><span><kbd>↑</kbd><kbd>↓</kbd> 移动</span><span><kbd>Enter</kbd> 打开</span></div>
+  </div>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>

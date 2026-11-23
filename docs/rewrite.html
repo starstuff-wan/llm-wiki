@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>建议你自己重写的 5 处 · LLM Wiki</title>
+<meta name="description" content="图像压缩程序 · 代码讲解知识库">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='white'%3E%23%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('llmwiki-theme');if(t)document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.dataset.theme='dark';}catch(e){}</script>
+</head>
+<body>
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <button class="icon-btn only-mobile" id="menuBtn" aria-label="打开菜单">☰</button>
+  <a class="brand" href="index.html"><span class="logo">◈</span><span>LLM Wiki</span></a>
+  <button class="search-trigger" id="searchTrigger"><span>🔍 搜索全部页面</span><kbd>Ctrl</kbd><kbd>K</kbd></button>
+  <button class="icon-btn" id="themeBtn" aria-label="切换主题">🌙</button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="nav"><a class="navlink " href="index.html"><span class="ni">◈</span>首页总览</a><div class="navgroup"><h5>起步</h5><a class="navlink" href="global.html"><span class="ni">🗺</span>全局：三个文件各管什么</a></div><div class="navgroup"><h5>核心原理</h5><a class="navlink" href="huffman.html"><span class="ni">🌲</span>Huffman 编码</a><a class="navlink" href="format.html"><span class="ni">📦</span>压缩文件格式 ICP1</a></div><div class="navgroup"><h5>三种算法</h5><a class="navlink" href="rle.html"><span class="ni">➡</span>RLE 行程编码</a><a class="navlink" href="lzw.html"><span class="ni">📖</span>LZW 字典编码</a><a class="navlink" href="bmp.html"><span class="ni">🖼</span>图像读写：手撕 BMP</a></div><div class="navgroup"><h5>质量评估</h5><a class="navlink" href="metrics.html"><span class="ni">📐</span>性能指标 PSNR / SSIM / 熵</a></div><div class="navgroup"><h5>工程实践</h5><a class="navlink" href="build.html"><span class="ni">⚙</span>编译与运行</a><a class="navlink" href="evidence.html"><span class="ni">✅</span>验证到什么程度</a></div><div class="navgroup"><h5>答辩准备</h5><a class="navlink active" href="rewrite.html"><span class="ni">✍</span>建议你自己重写的 5 处</a><a class="navlink" href="faq.html"><span class="ni">💬</span>常见追问速查</a></div><div class="navgroup"><h5>互动</h5><a class="navlink " href="graph.html"><span class="ni">🕸</span>知识图谱</a><a class="navlink " href="quiz.html"><span class="ni">🎯</span>自测卡片</a></div></nav></aside>
+  <main class="content"><article><div class="pagehead"><div class="kicker">答辩准备</div><h1>建议你自己重写的 5 处</h1></div><div class="tablewrap"><table><thead><tr><th>位置</th><th>为什么</th></tr></thead><tbody><tr><td><code>HuffTable::build</code> 的建树循环</td><td>这是作业的“灵魂”，你要能白板写出“取两个最小、合并、放回”</td></tr><tr><td><code>buildCanonical</code></td><td>最容易被问“为什么只存码长”，你要能手推一遍</td></tr><tr><td><code>BitWriter::put</code></td><td>被问“你怎么把不等长码写进字节”时，要能讲清攒位</td></tr><tr><td><code>lzwDecode</code> 的词条登记时机</td><td>被问“解码端怎么知道新词条是什么”时，这是标准答案</td></tr><tr><td><code>main.cpp</code> 的菜单文案</td><td>换成你自己的说法，别留我的措辞</td></tr></tbody></table></div><p>改的时候记住三个数字，答辩经常问：</p><ul><li>8 位图像，Huffman 最差每像素 8 bit（等价于不压缩）</li><li>一阶熵是 Huffman 的理论下限，实际平均码长 = 熵 + 0~1 bit</li><li>无损压缩 PSNR 必须是无穷（程序里输出 99），一旦不是，说明有 bug</li></ul></article><section class="related"><h4>相关页面</h4><div class="chips"><a class="chip" href="faq.html">常见追问速查<em>答辩问答</em></a><a class="chip" href="lzw.html">LZW 字典编码<em>最易写错</em></a></div></section><nav class="pager"><a class="pg prev" href="evidence.html"><small>← 上一篇</small>验证到什么程度</a><a class="pg next" href="faq.html"><small>下一篇 →</small>常见追问速查</a></nav></main>
+  <aside class="toc"></aside>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="palette" id="palette" hidden>
+  <div class="pbox">
+    <input id="searchInput" type="text" placeholder="输入关键词，↑↓ 选择，Enter 打开…" autocomplete="off">
+    <div class="presults" id="searchResults"></div>
+    <div class="pfoot"><span><kbd>Esc</kbd> 关闭</span><span><kbd>↑</kbd><kbd>↓</kbd> 移动</span><span><kbd>Enter</kbd> 打开</span></div>
+  </div>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>
